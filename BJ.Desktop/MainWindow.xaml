@@ -1,0 +1,140 @@
+﻿<Window x:Class="BJ.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:BJ.Desktop.Converters"
+        xmlns:helpers="clr-namespace:BJ.Desktop.Helpers"
+        Title="Bullet Journal"
+        Width="800" Height="580">
+    <Window.Resources>
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <!-- Left: Navigation -->
+            <ColumnDefinition Width="*"/>
+            <!-- Center: Day/Collection -->
+            <ColumnDefinition Width="300"/>
+            <!-- Right: Context/Details -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel: List of journal entries -->
+        <StackPanel Grid.Column="0" Margin="5">
+            <!-- Calendar -->
+            <TextBlock Text="Calendar" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+            <Calendar SelectedDate="{Binding SelectedDate}" DisplayMode="Month" Margin="0,0,0,5"/>
+            <Button Content="Today" Command="{Binding GoToTodayCommand}" Height="30" Margin="0,5,0,10"/>
+
+            <!-- Notebook Selector -->
+            <TextBlock Text="Notebook:" FontWeight="Bold"/>
+            <ComboBox ItemsSource="{Binding Notebooks}" 
+              SelectedItem="{Binding SelectedNotebook}" 
+              DisplayMemberPath="Name" Margin="0,0,0,5"/>
+
+            <!-- Tag Filter -->
+            <TextBlock Text="Filter Tags:" FontWeight="Bold" Margin="0,10,0,2"/>
+            <ComboBox   Width="200"
+                        ItemsSource="{Binding AllTagItems}"
+                        IsEditable="False"
+                        StaysOpenOnEdit="True"
+                        Margin="0,0,0,5">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox Content="{Binding Name}"
+                          IsChecked="{Binding DataContext.SelectedFilterTags,
+                                              RelativeSource={RelativeSource AncestorType=ComboBox},
+                                              Converter={StaticResource CollectionContainsConverter},
+                                              ConverterParameter={Binding},
+                                              Mode=TwoWay}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <!-- Journal Entries -->
+            <TextBlock Text="Journal Entries" FontSize="16" FontWeight="Bold" Margin="0,10,0,5"/>
+            <ListBox ItemsSource="{Binding Items}" 
+             SelectedItem="{Binding SelectedItem, Mode=TwoWay}" 
+             DisplayMemberPath="Title" Height="200"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                <Button Content="Add Item" Command="{Binding AddItemCommand}" Height="35" Width="100" Margin="0,0,10,0"/>
+                <Button Content="Delete Selected" Command="{Binding DeleteItemCommand}" 
+                IsEnabled="{Binding SelectedItem, Converter={StaticResource NullToBoolConverter}}" 
+                Width="120"/>
+            </StackPanel>
+        </StackPanel>
+
+
+        <!-- CENTER PANEL: Collection View -->
+        <StackPanel Grid.Column="1" Margin="10,0" >
+            <TextBlock Text="Daily View" FontWeight="Bold" FontSize="16" />
+            <ListBox ItemsSource="{Binding Items}"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                        BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Padding="6" Margin="2">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </StackPanel>
+        <!-- Right Panel: Editor -->
+        <StackPanel Grid.Column="2" Margin="10">
+            <TextBlock Text="Title:"
+               FontWeight="ExtraBold"
+               Margin="0,0,0,5" />
+            <TextBox Text="{Binding EditingItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+             Height="35" />
+
+            <TextBlock Text="Content:"
+               FontWeight="Bold"
+               Margin="0,10,0,5" />
+            <TextBox Text="{Binding EditingItem.Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+             AcceptsReturn="True"
+             TextWrapping="Wrap"
+             VerticalScrollBarVisibility="Auto"
+             Height="200" />
+
+            <TextBlock Text="Tags:"
+               FontWeight="Bold"
+               Margin="0,5,0,5" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button Content="Add Tag"
+                Command="{Binding AddTagCommand}"
+                Height="30"
+                Width="80"
+                Margin="0,0,5,0"
+                IsEnabled="{Binding SelectedItem, Converter={StaticResource NullToBoolConverter}}" />
+
+                <Button Content="Remove Tag"
+                Command="{Binding RemoveTagCommand}"
+                CommandParameter="{Binding SelectedItem, Mode=OneWay}"
+                Height="30"
+                Width="100"
+                IsEnabled="{Binding SelectedItem, Converter={StaticResource NullToBoolConverter}}" />
+            </StackPanel>
+
+            <ListBox ItemsSource="{Binding EditingTags}"
+             SelectedItem="{Binding SelectedTag, Mode=TwoWay}"
+             DisplayMemberPath="Name"
+             Height="108" />
+
+            <Button Content="Save Changes"
+            Command="{Binding SaveItemCommand}"
+            Margin="0,10,0,0"
+            Height="35"
+            IsEnabled="{Binding SelectedItem, Converter={StaticResource NullToBoolConverter}}" />
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -1,0 +1,4 @@
+include ':silentmodetoggle'
+include ':silentmodetoggle'
+include ':app'
+rootProject.name = "Hello Android"
