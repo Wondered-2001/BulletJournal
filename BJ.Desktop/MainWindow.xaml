@@ -7,7 +7,9 @@
         Width="800" Height="580">
     <Window.Resources>
         <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
+
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -42,12 +44,8 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Content="{Binding Name}"
-                          IsChecked="{Binding DataContext.SelectedFilterTags,
-                                              RelativeSource={RelativeSource AncestorType=ComboBox},
-                                              Converter={StaticResource CollectionContainsConverter},
-                                              ConverterParameter={Binding},
-                                              Mode=TwoWay}" />
+                            <CheckBox Content="{Binding Tag.Name}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

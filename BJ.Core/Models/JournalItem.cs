@@ -14,6 +14,9 @@ namespace BJ.Core.Models
         [ObservableProperty]
         private string _content = string.Empty;
 
+        [ObservableProperty]
+        private bool _isVisible = true;
+
         // Navigation properties
         public ObservableCollection<Tag> Tags { get; set; } = new();
         public int? NotebookId { get; set; } // optional

@@ -254,18 +254,16 @@ namespace BJ.Core.ViewModels
         {
             if (SelectedFilterTags.Count == 0)
             {
-                // No filter -> show all items
-                _ = LoadItemsAsync();
+                // show all
+                foreach (var i in Items)
+                    i.IsVisible = true; // if your model supports this
                 return;
             }
 
-            var filtered = Items
-                .Where(i => i.Tags.Any(t => SelectedFilterTags.Any(f => f.Name == t.Name)))
-                .ToList();
+            var selectedNames = SelectedFilterTags.Select(t => t.Name).ToHashSet();
 
-            Items.Clear();
-            foreach (var item in filtered)
-                Items.Add(item);
+            foreach (var item in Items)
+                item.IsVisible = item.Tags.Any(t => selectedNames.Contains(t.Name));
         }
     }
 }
